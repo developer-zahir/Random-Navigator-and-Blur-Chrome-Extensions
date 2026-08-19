@@ -71,32 +71,46 @@ if (!Element.prototype._originalAttachShadow) {
     };
 }
 
-// === OPTIMIZED OBSERVER (only process addedNodes) ===
+// === OPTIMIZED OBSERVER (React-safe: watches childList + class attribute changes) ===
 function setupObserver() {
     if (observer) return;
     observer = new MutationObserver((mutations) => {
         if (currentAmount <= 0 || !currentSelector) return;
         for (const mutation of mutations) {
-            for (const node of mutation.addedNodes) {
-                if (node.nodeType !== Node.ELEMENT_NODE) continue;
+            if (mutation.type === 'childList') {
+                for (const node of mutation.addedNodes) {
+                    if (node.nodeType !== Node.ELEMENT_NODE) continue;
+                    try {
+                        if (node.matches && node.matches(currentSelector)) {
+                            node.classList.add('sensitive-blur');
+                        }
+                        node.querySelectorAll?.(currentSelector).forEach(el => el.classList.add('sensitive-blur'));
+                    } catch (e) {}
+                    if (node.shadowRoot) pierceAndAddClass(node.shadowRoot);
+                }
+            } else if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const el = mutation.target;
+                if (el.nodeType !== Node.ELEMENT_NODE) continue;
                 try {
-                    if (node.matches && node.matches(currentSelector)) {
-                        node.classList.add('sensitive-blur');
+                    if (el.classList.contains('sensitive-blur')) continue;
+                    if (el.matches && el.matches(currentSelector)) {
+                        el.classList.add('sensitive-blur');
                     }
-                    node.querySelectorAll?.(currentSelector).forEach(el => el.classList.add('sensitive-blur'));
                 } catch (e) {}
-                if (node.shadowRoot) pierceAndAddClass(node.shadowRoot);
             }
         }
     });
-    observer.observe(document.documentElement || document, { childList: true, subtree: true });
+    observer.observe(document.documentElement || document, {
+        childList: true, subtree: true,
+        attributes: true, attributeFilter: ['class']
+    });
 }
 
 function startPeriodicCheck() {
     if (periodicInterval) clearInterval(periodicInterval);
     periodicInterval = setInterval(() => {
         if (currentAmount > 0 && currentSelector) pierceAndAddClass(document);
-    }, 3000);
+    }, 2000);
 }
 
 // === BLUR CONTROL ===
