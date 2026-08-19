@@ -255,12 +255,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (!domain) return;
 
     const blurStorageKey = `${domain}_blur_settings`;
-    chrome.storage.local.get(["activeTasks", blurStorageKey], (data) => {
-        const tasks = data.activeTasks || {};
-        const isRunning = !!tasks[String(tabId)];
-        const blurSettings = data[blurStorageKey] || DEFAULT_BLUR;
-        const amountToSend = isRunning ? (blurSettings.amount || DEFAULT_BLUR.amount) : 0;
-        sendBlurMessage(tabId, blurSettings.classes, amountToSend);
+    chrome.storage.local.get([blurStorageKey], (data) => {
+        const blurSettings = data[blurStorageKey];
+        if (blurSettings && blurSettings.classes) {
+            sendBlurMessage(tabId, blurSettings.classes, blurSettings.amount || DEFAULT_BLUR.amount);
+        }
     });
 });
 
@@ -304,15 +303,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (!domain) return true;
 
         const blurStorageKey = `${domain}_blur_settings`;
-        chrome.storage.local.get(["activeTasks", blurStorageKey], (data) => {
-            const blurSettings = data[blurStorageKey] || DEFAULT_BLUR;
-            const tasks = data.activeTasks || {};
+        chrome.storage.local.get([blurStorageKey], (data) => {
+            const blurSettings = data[blurStorageKey];
             const tabId = sender.tab?.id;
 
-            if (tabId) {
-                const isRunning = !!tasks[String(tabId)];
-                const amountToSend = isRunning ? (blurSettings.amount || DEFAULT_BLUR.amount) : 0;
-                sendBlurMessage(tabId, blurSettings.classes, amountToSend);
+            if (tabId && blurSettings && blurSettings.classes) {
+                sendBlurMessage(tabId, blurSettings.classes, blurSettings.amount || DEFAULT_BLUR.amount);
             }
         });
         return true;

@@ -381,8 +381,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 isRunning = !!activeTasks[currentTabId];
                 updateUI();
 
-                if (isRunning) {
-                    const classesArray = blurSettings.classes.split(',').map(c => c.trim()).filter(c => c.length > 0);
+                const classesArray = blurSettings.classes.split(',').map(c => c.trim()).filter(c => c.length > 0);
+                if (classesArray.length > 0 && blurSettings.amount > 0) {
                     applyBlurToTab(classesArray, blurSettings.amount, currentTabId);
                 }
             });
@@ -426,10 +426,8 @@ document.addEventListener("DOMContentLoaded", function () {
         chrome.storage.local.set({ [blurStorageKey]: blurSettings }, () => {
             showCustomNotification("ব্লার সেটিংস সেভ হয়েছে!");
 
-            if (isRunning) {
-                const classesArray = classesToSave.split(',').map(c => c.trim()).filter(c => c.length > 0);
-                applyBlurToTab(classesArray, amountToSave, currentTabId);
-            }
+            const classesArray = classesToSave.split(',').map(c => c.trim()).filter(c => c.length > 0);
+            applyBlurToTab(classesArray, amountToSave, currentTabId);
         });
     });
 
