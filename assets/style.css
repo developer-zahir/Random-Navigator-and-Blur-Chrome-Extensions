@@ -1,0 +1,309 @@
+@font-face {
+  font-family: 'Hind Siliguri';
+  src: url('/assets/HindSiliguri-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Hind Siliguri';
+  src: url('/assets/HindSiliguri-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Hind Siliguri';
+  src: url('/assets/HindSiliguri-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+
+
+/* --- CSS Variables (Theme Configuration) --- */
+:root {
+  /* Colors */
+  --primary-color: #008cba;
+  --secondary-color: #4caf50;
+  --error-color: #d32f2f;
+  --background-light: #f4f4f9;
+  --surface-color: #ffffff;
+  --text-dark: #333333;
+  --text-muted: #555555;
+  --border-color: #cccccc;
+  /* Typography */
+  --main-font: "Hind Siliguri", sans-serif;
+  --text-font-size: 1em;
+  --button-font-size: 1.05em;
+  /* Spacing & Radius */
+  --spacing-unit: 8px;
+  --border-radius-base: 4px;
+  --border-radius-popup: 5px;
+}
+/* স্ক্রলবার স্টাইল */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background-light);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #007bb5;
+}
+/* UI Style */
+body {
+  font-family: var(--main-font);
+  padding: var(--spacing-unit);
+  width: 320px;
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-popup);
+}
+/* হেডিং স্টাইল আপডেট: আইকনের জন্য ফ্লেক্স ব্যবহার করা হলো */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 7px;
+  margin-top: 0;
+  margin-bottom: 9px;
+}
+.main-header h3 {
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 1.2em;
+  margin: 0;
+  border-bottom: none;
+  transform: translateY(1px);
+}
+
+.main-header a {
+  color: var(--surface-color);
+  background-color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1em;
+  transition: 0.4s;
+  padding: 2px 7px 1px 7px;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius-base);
+  opacity: 0.8;
+}
+.main-header a:hover {
+  opacity: 1;
+}
+/* টাস্ক ট্যাব স্টাইল */
+#tabs {
+  display: flex;
+  margin-bottom: 0;
+  border-bottom: 2px solid var(--border-color);
+}
+.tab-button {
+  width: 33.33%;
+  padding: var(--spacing-unit) 0;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+  transition: background-color 0.3s;
+  font-family: var(--main-font);
+  font-size: 0.95em;
+}
+.tab-button.active {
+  background-color: var(--surface-color);
+  color: var(--primary-color);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+}
+.tab-content {
+  display: none;
+  padding-top: 5px;
+}
+.tab-content.active {
+  display: block;
+}
+/* ইন-লাইন ফিল্ডের জন্য স্টাইল */
+.inline-fields {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.input-group {
+  flex: 1;
+}
+label {
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 1px;
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: var(--text-font-size);
+}
+input[type="number"],
+textarea,
+input[type="range"] {
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 6px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  resize: vertical;
+  font-size: var(--text-font-size);
+  font-family: var(--main-font);
+}
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+textarea#urlList {
+  min-height: 120px;
+}
+button {
+  width: 100%;
+  padding: var(--spacing-unit);
+  margin-top: 5px;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--border-radius-base);
+  font-weight: 600;
+  transition: background-color 0.3s;
+  font-family: var(--main-font);
+  font-size: var(--button-font-size);
+  color: var(--surface-color);
+}
+/* টাস্ক লিস্ট স্টাইল */
+#activeTasksList {
+  list-style: none;
+  padding: 13px 0 0 0;
+  margin: 0;
+}
+#activeTasksList li {
+  background-color: var(--surface-color);
+  border: 1px solid #e0e0e0;
+  padding: var(--spacing-unit);
+  margin-bottom: 6px;
+  border-radius: var(--border-radius-base);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-font-size);
+}
+.task-domain {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: var(--text-font-size);
+}
+.task-status {
+  font-size: 0.9em;
+  color: var(--secondary-color);
+}
+.task-actions button {
+  width: auto;
+  padding: 5px 10px;
+  margin-left: 5px;
+  font-size: 0.9em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+/* কাস্টম নোটিফিকেশন স্টাইল */
+#customNotification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--secondary-color);
+  color: var(--surface-color);
+  padding: 10px 20px;
+  border-radius: var(--border-radius-popup);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.5s;
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.1em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+#customNotification.show {
+  opacity: 1;
+}
+/* বাটনের রঙ ভ্যারিয়েবল ব্যবহার করে */
+#startStop {
+  background-color: var(--secondary-color);
+  color: var(--surface-color);
+}
+#startStop.running {
+  background-color: var(--error-color);
+}
+#saveSettings,
+#SaveBlurSettings {
+  background-color: var(--primary-color);
+}
+#resetSettings {
+  background-color: var(--text-muted);
+  margin-top: 6px;
+}
+.task-actions .edit-btn {
+  background-color: var(--primary-color);
+}
+.task-actions .stop-btn {
+  background-color: var(--error-color);
+}
+/* স্ট্যাটাস ইন্ডিকেটর */
+#status {
+  padding: 11px 6px 8px 6px;
+  border-radius: var(--border-radius-base);
+  text-align: center;
+  font-size: var(--text-font-size);
+  line-height: 0 !important;
+}
+.running {
+  background-color: #a4ffba;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.stopped {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+#currentDomain {
+  font-size: var(--text-font-size);
+  margin-bottom: -2px;
+}
+.current-site-status {
+  background: #4caf5024;
+  padding: 4px;
+  border-radius: 5px;
+  border: 1px solid #4caf506b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.current-site-status p {
+  margin: 0;
+}
+.slider-group {
+  margin-top: 10px;
+}
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.checkbox-group label {
+  margin: 0;
+  font-weight: 400;
+  cursor: pointer;
+}

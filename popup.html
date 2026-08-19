@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Navigator Manager</title>
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
+  <body>
+    <div class="main-header">
+      <h3>🌐 অটো রিলোডার</h3>
+      <a href="https://developerzahir.com" target="_blank">Dev Info.</a>
+    </div>
+
+    <div class="current-site-status">
+      <p id="currentDomain">ডোমেন: লোড হচ্ছে...</p>
+      <p id="status" class="stopped">স্ট্যাটাস: বন্ধ</p>
+    </div>
+
+    <div id="tabs">
+      <button class="tab-button active" id="navigatorTabButton" data-tab="navigator">নেভিগেটর</button>
+      <button class="tab-button" id="blurTabButton" data-tab="blurSettings">ব্লার সেটিংস</button>
+      <button class="tab-button" id="taskListTabButton" data-tab="taskList">সক্রিয় টাস্ক</button>
+    </div>
+
+    <div id="navigatorContent" class="tab-content active">
+      <div id="settingsForm">
+        <div class="inline-fields">
+          <div class="input-group">
+            <label for="minSec">ন্যূনতম সেকেন্ড (Min Sec):</label>
+            <input type="number" id="minSec" min="1" value="60" />
+          </div>
+          <div class="input-group">
+            <label for="maxSec">সর্বোচ্চ সেকেন্ড (Max Sec):</label>
+            <input type="number" id="maxSec" min="1" value="600" />
+          </div>
+        </div>
+        <div class="inline-fields">
+          <div class="input-group">
+            <label for="minReloadCount">ন্যূনতম রিলোড সংখ্যা:</label>
+            <input type="number" id="minReloadCount" min="0" value="1" />
+          </div>
+          <div class="input-group">
+            <label for="maxReloadCount">সর্বোচ্চ রিলোড সংখ্যা:</label>
+            <input type="number" id="maxReloadCount" min="1" value="5" />
+          </div>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="navigateOnly" />
+          <label for="navigateOnly">Reload Disable (Only Navigate)</label>
+        </div>
+
+        <label for="urlList">নেভিগেট ইউআরএল (প্রতি লাইনে একটি):</label>
+        <textarea id="urlList" rows="4">
+https://www.example.com/page1
+https://www.example.com/page2
+</textarea>
+        <button id="saveSettings">সেটিংস সেভ করুন</button>
+        <button id="resetSettings">রিসেট সেটিংস (ডাবল ক্লিক)</button>
+      </div>
+      <button id="startStop">শুরু/বন্ধ করুন</button>
+    </div>
+
+    <div id="blurSettingsContent" class="tab-content">
+      <div class="input-group">
+        <label for="blurClasses">ব্লার করার জন্য CSS ক্লাস (কমা দিয়ে আলাদা করুন):</label>
+        <textarea id="blurClasses" rows="3">example-class, hide-this-div</textarea>
+      </div>
+
+      <div class="input-group slider-group">
+        <label for="blurAmount">ব্লারের পরিমাণ: <span id="blurValue">4</span>px</label>
+        <input type="range" id="blurAmount" min="0" max="20" value="4" />
+      </div>
+
+      <button id="SaveBlurSettings">ব্লার ইলিমেন্ট সেভ করুন</button>
+    </div>
+
+    <div id="taskListContent" class="tab-content">
+      <ul id="activeTasksList">
+        <li>কোন সক্রিয় টাস্ক নেই।</li>
+      </ul>
+    </div>
+    <div id="customNotification">সেটিংস সেভ হয়েছে!</div>
+    <script src="popup.js"></script>
+  </body>
+</html>
