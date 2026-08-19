@@ -7,10 +7,14 @@ A Chrome extension for automatic random navigation/reload and sensitive data blu
 - **Auto Navigator** - Randomly navigate to URLs from a custom list with configurable time intervals
 - **Auto Reload** - Reload pages a random number of times between navigate cycles
 - **Sensitive Data Blur** - Blur CSS class-based elements with hover-to-reveal
+- **Advanced CSS Selectors** - Support for `.class1.class2`, `#id`, `[attr]`, `tag.class` and more
 - **Shadow DOM Support** - Blur works inside shadow DOM components
 - **Per-Site Settings** - Each domain has its own独立 navigator and blur configuration
 - **Multi-Tab Management** - Control multiple tabs simultaneously from the Active Tasks panel
 - **Badge Countdown** - Visual countdown timer on the extension icon
+- **Task History** - Track all navigate/reload events with timestamps
+- **Statistics Dashboard** - View total actions, navigations, reloads, and unique sites
+- **Export/Import Settings** - Backup and restore all settings as JSON files
 - **MV3 Compatible** - Built with Manifest V3, uses `chrome.alarms` for reliable service worker timers
 - **Service Worker Recovery** - Tasks are restored automatically if the service worker restarts
 
@@ -33,12 +37,22 @@ A Chrome extension for automatic random navigation/reload and sensitive data blu
 
 ### Blur Settings Tab
 - Enter CSS class names (comma-separated) to blur
+- Supports advanced selectors: `._1xeo152._1i3bicu`, `#myId`, `[data-testid="x"]`, `div.class`
 - Adjust blur amount with the slider (0-20px)
 - Hover over blurred elements to reveal them temporarily
 
 ### Active Tasks Tab
 - View all running tasks across tabs
 - Stop individual tasks directly from the panel
+
+### History Tab
+- View statistics: total actions, navigations, reloads, unique sites
+- Browse recent navigate/reload events with timestamps
+- Clear history when needed
+
+### Export/Import
+- Export all settings as a JSON backup file
+- Import settings from a previously exported JSON file
 
 ## How It Works
 

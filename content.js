@@ -110,7 +110,12 @@ function applyBlur(classes, amount) {
         classesArray = classes.split(',').map(c => c.trim()).filter(c => c.length > 0);
     }
 
-    const selector = classesArray.map(c => `.${c.replace(/([.\\])/g, '\\$1')}`).join(', ');
+    // Smart selector: supports .class, .class1.class2, #id, [attr], tag.class etc.
+    const selector = classesArray.map(c => {
+        if (!c) return null;
+        if (c[0] === '.' || c[0] === '#' || c[0] === '[') return c;
+        return `.${c.replace(/([.\\])/g, '\\$1')}`;
+    }).filter(Boolean).join(', ');
 
     if (selector === currentSelector && amount === currentAmount) return;
 

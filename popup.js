@@ -167,6 +167,9 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (tabName === "taskList") {
             buttonId = "taskListTabButton";
             contentId = "taskListContent";
+        } else if (tabName === "history") {
+            buttonId = "historyTabButton";
+            contentId = "historyContent";
         }
 
         const button = document.getElementById(buttonId);
@@ -177,6 +180,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (tabName === "taskList") {
             chrome.runtime.sendMessage({ action: "getTasks" }, renderTaskList);
+        }
+        if (tabName === "history") {
+            loadHistory();
         }
     }
 
@@ -192,6 +198,96 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Blur send error:", err);
             }
         });
+    }
+
+    // === HISTORY & STATISTICS ===
+    function formatTime(ts) {
+        const d = new Date(ts);
+        const now = new Date();
+        const diff = now - d;
+        if (diff < 60000) return 'এইমাত্র';
+        if (diff < 3600000) return `${Math.floor(diff / 60000)}মি আগে`;
+        if (diff < 86400000) return `${Math.floor(diff / 3600000)}ঘ আগে`;
+        return d.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short' });
+    }
+
+    function renderStats(history) {
+        const navigates = history.filter(e => e.action === 'navigate').length;
+        const reloads = history.filter(e => e.action === 'reload').length;
+        const domains = new Set(history.map(e => e.domain)).size;
+
+        document.getElementById('statTotal').textContent = history.length;
+        document.getElementById('statNavigate').textContent = navigates;
+        document.getElementById('statReload').textContent = reloads;
+        document.getElementById('statDomains').textContent = domains;
+    }
+
+    function renderHistory(history) {
+        const list = document.getElementById('historyList');
+        list.innerHTML = '';
+
+        if (!history || history.length === 0) {
+            list.innerHTML = '<li class="history-empty">কোন ইতিহাস নেই।</li>';
+            return;
+        }
+
+        history.slice(0, 50).forEach(event => {
+            const li = document.createElement('li');
+            const actionLabel = event.action === 'navigate' ? 'নেভিগেট' : 'রিলোড';
+            const badgeClass = event.action === 'navigate' ? 'navigate' : 'reload';
+            const shortUrl = event.url ? event.url.replace(/^https?:\/\//, '').substring(0, 30) : '';
+
+            li.innerHTML = `
+                <div class="history-info">
+                    <span class="history-domain">${event.domain}</span>
+                    <span class="history-detail">${shortUrl}${shortUrl.length >= 30 ? '...' : ''}</span>
+                </div>
+                <span class="history-badge ${badgeClass}">${actionLabel}</span>
+                <span class="history-time">${formatTime(event.timestamp)}</span>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function loadHistory() {
+        chrome.runtime.sendMessage({ action: "getHistory" }, (history) => {
+            renderStats(history);
+            renderHistory(history);
+        });
+    }
+
+    // === EXPORT / IMPORT ===
+    function exportSettings() {
+        chrome.runtime.sendMessage({ action: "exportSettings" }, (data) => {
+            if (!data) return;
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pagepilot-settings-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showCustomNotification("সেটিংস এক্সপোর্ট হয়েছে!");
+        });
+    }
+
+    function importSettings(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                chrome.runtime.sendMessage({ action: "importSettings", data: data }, (response) => {
+                    if (response?.status === 'imported') {
+                        showCustomNotification("সেটিংস ইম্পোর্ট হয়েছে! রিলোড করুন।");
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                });
+            } catch (err) {
+                showCustomNotification("ত্রুটি: সঠিক JSON ফাইল দিন।");
+            }
+        };
+        reader.readAsText(file);
     }
 
     // ✅ Real-time UI update with debouncing
@@ -299,6 +395,20 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("navigatorTabButton").addEventListener("click", () => switchTab("navigator"));
     document.getElementById("blurTabButton").addEventListener("click", () => switchTab("blurSettings"));
     document.getElementById("taskListTabButton").addEventListener("click", () => switchTab("taskList"));
+    document.getElementById("historyTabButton").addEventListener("click", () => switchTab("history"));
+
+    document.getElementById("clearHistory").addEventListener("click", () => {
+        chrome.runtime.sendMessage({ action: "clearHistory" }, () => {
+            loadHistory();
+            showCustomNotification("ইতিহাস মুছে ফেলা হয়েছে!");
+        });
+    });
+
+    document.getElementById("exportSettings").addEventListener("click", exportSettings);
+    document.getElementById("importFile").addEventListener("change", (e) => {
+        if (e.target.files[0]) importSettings(e.target.files[0]);
+        e.target.value = '';
+    });
 
     blurAmountInput.addEventListener("input", () => {
         blurValueSpan.textContent = blurAmountInput.value;

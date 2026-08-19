@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Random Navigator and Blur",
-  "version": "1.1",
+  "version": "1.2",
   "description": "A browser extension for random navigation/reload and sensitive data blurring.",
   "permissions": ["storage", "tabs", "activeTab", "scripting", "alarms"],
   "host_permissions": ["<all_urls>"],

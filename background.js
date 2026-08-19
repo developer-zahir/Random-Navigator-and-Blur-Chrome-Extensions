@@ -3,6 +3,7 @@ let activeTasks = {};
 
 const ALARM_PREFIX = 'pagepilot_';
 const DEFAULT_BLUR = { classes: "user-balance, balance", amount: 4 };
+const MAX_HISTORY = 200;
 
 // === UTILITY ===
 function extractDomain(url) {
@@ -23,6 +24,25 @@ function getRandomInt(min, max) {
 
 function getAlarmName(tabId) {
     return `${ALARM_PREFIX}${tabId}`;
+}
+
+// === HISTORY TRACKING ===
+function logHistoryEvent(domain, action, url) {
+    if (!domain && url) {
+        try { domain = new URL(url).hostname.replace(/^www\./, ''); } catch(e) {}
+    }
+    const event = {
+        timestamp: Date.now(),
+        domain: domain || 'unknown',
+        action,
+        url: url || ''
+    };
+    chrome.storage.local.get(["taskHistory"], (data) => {
+        const history = data.taskHistory || [];
+        history.unshift(event);
+        if (history.length > MAX_HISTORY) history.length = MAX_HISTORY;
+        chrome.storage.local.set({ taskHistory: history });
+    });
 }
 
 // === TASK RESTORATION (SW restart recovery) ===
@@ -193,6 +213,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
     if (actionType === "reload") {
         console.log(`%c[Reload] পেজ রিলোড (${task.currentReloadCount + 1}/${task.randomMaxReloads})`, 'color: #ffa500; font-weight: bold;');
+        logHistoryEvent(task.currentSettings._domain, 'reload', nextUrl);
 
         chrome.tabs.reload(tabId, {}, () => {
             if (chrome.runtime.lastError) {
@@ -207,6 +228,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         });
     } else {
         console.log(`%c[Navigate] নতুন পেজে যাচ্ছি: ${nextUrl}`, 'color: #00bfff; font-weight: bold;');
+        logHistoryEvent(task.currentSettings._domain, 'navigate', nextUrl);
 
         chrome.tabs.update(tabId, { url: nextUrl }, () => {
             if (chrome.runtime.lastError) {
@@ -246,6 +268,34 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "getTasks") {
         sendResponse(activeTasks);
+        return true;
+    }
+
+    if (request.action === "getHistory") {
+        chrome.storage.local.get(["taskHistory"], (data) => {
+            sendResponse(data.taskHistory || []);
+        });
+        return true;
+    }
+
+    if (request.action === "clearHistory") {
+        chrome.storage.local.set({ taskHistory: [] }, () => {
+            sendResponse({ status: "cleared" });
+        });
+        return true;
+    }
+
+    if (request.action === "exportSettings") {
+        chrome.storage.local.get(null, (data) => {
+            sendResponse(data);
+        });
+        return true;
+    }
+
+    if (request.action === "importSettings" && request.data) {
+        chrome.storage.local.set(request.data, () => {
+            sendResponse({ status: "imported" });
+        });
         return true;
     }
 

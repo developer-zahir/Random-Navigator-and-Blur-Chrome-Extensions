@@ -20,6 +20,7 @@
       <button class="tab-button active" id="navigatorTabButton" data-tab="navigator">নেভিগেটর</button>
       <button class="tab-button" id="blurTabButton" data-tab="blurSettings">ব্লার সেটিংস</button>
       <button class="tab-button" id="taskListTabButton" data-tab="taskList">সক্রিয় টাস্ক</button>
+      <button class="tab-button" id="historyTabButton" data-tab="history">ইতিহাস</button>
     </div>
 
     <div id="navigatorContent" class="tab-content active">
@@ -79,6 +80,28 @@ https://www.example.com/page2
         <li>কোন সক্রিয় টাস্ক নেই।</li>
       </ul>
     </div>
+
+    <div id="historyContent" class="tab-content">
+      <div id="statsDashboard">
+        <div class="stat-card"><span class="stat-value" id="statTotal">0</span><span class="stat-label">মোট অ্যাকশন</span></div>
+        <div class="stat-card"><span class="stat-value" id="statNavigate">0</span><span class="stat-label">নেভিগেট</span></div>
+        <div class="stat-card"><span class="stat-value" id="statReload">0</span><span class="stat-label">রিলোড</span></div>
+        <div class="stat-card"><span class="stat-value" id="statDomains">0</span><span class="stat-label">সাইট</span></div>
+      </div>
+      <div class="history-actions">
+        <button id="clearHistory" class="clear-btn">ইতিহাস মুছুন</button>
+      </div>
+      <ul id="historyList">
+        <li class="history-empty">কোন ইতিহাস নেই।</li>
+      </ul>
+    </div>
+
+    <div id="exportImportSection">
+      <button id="exportSettings">সেটিংস এক্সপোর্ট (JSON)</button>
+      <label for="importFile" class="import-label">সেটিংস ইম্পোর্ট (JSON)</label>
+      <input type="file" id="importFile" accept=".json" style="display:none" />
+    </div>
+
     <div id="customNotification">সেটিংস সেভ হয়েছে!</div>
     <script src="popup.js"></script>
   </body>
